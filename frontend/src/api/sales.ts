@@ -27,6 +27,9 @@ export interface SalePayment {
 export interface Sale {
   id: number
   billNumber: string
+  propertyId: number
+  posId: number
+  posName: string
   customer: MasterRef | null
   cashier: MasterRef
   items: SaleItemLine[]
@@ -48,6 +51,8 @@ export interface PaymentRequest {
 }
 
 export interface CheckoutRequest {
+  propertyId: number
+  posId: number
   customerId: number | null
   items: CheckoutItemRequest[]
   payments: PaymentRequest[]
@@ -55,7 +60,8 @@ export interface CheckoutRequest {
 
 export const salesApi = {
   checkout: async (request: CheckoutRequest): Promise<Sale> => (await apiClient.post<Sale>('/v1/sales', request)).data,
-  list: async (): Promise<Sale[]> => (await apiClient.get<Sale[]>('/v1/sales')).data,
+  listByProperty: async (propertyId: number): Promise<Sale[]> =>
+    (await apiClient.get<Sale[]>(`/v1/properties/${propertyId}/sales`)).data,
   get: async (id: number): Promise<Sale> => (await apiClient.get<Sale>(`/v1/sales/${id}`)).data,
 }
 

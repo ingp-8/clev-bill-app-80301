@@ -2,9 +2,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   brandsApi,
   categoriesApi,
+  customersApi,
   itemsApi,
   priceListItemsApi,
   priceListsApi,
+  suppliersApi,
   taxRatesApi,
   type PriceListItemRequest,
 } from '../api/masters'
@@ -58,6 +60,53 @@ export const brandHooks = createPropertyScopedHooks('brands', brandsApi)
 export const taxRateHooks = createPropertyScopedHooks('tax-rates', taxRatesApi)
 export const itemHooks = createPropertyScopedHooks('items', itemsApi)
 export const priceListHooks = createPropertyScopedHooks('price-lists', priceListsApi)
+
+function createClientScopedHooks<TEntity, TRequest>(
+  queryKey: string,
+  api: {
+    listByClient: (clientId: number) => Promise<TEntity[]>
+    create: (clientId: number, request: TRequest) => Promise<TEntity>
+    update: (id: number, request: TRequest) => Promise<TEntity>
+    remove: (id: number) => Promise<void>
+  },
+) {
+  function useListByClient(clientId: number) {
+    return useQuery({
+      queryKey: [queryKey, clientId],
+      queryFn: () => api.listByClient(clientId),
+      enabled: Number.isFinite(clientId),
+    })
+  }
+
+  function useCreateForClient(clientId: number) {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: (request: TRequest) => api.create(clientId, request),
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: [queryKey, clientId] }),
+    })
+  }
+
+  function useUpdate(clientId: number) {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: ({ id, request }: { id: number; request: TRequest }) => api.update(id, request),
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: [queryKey, clientId] }),
+    })
+  }
+
+  function useDelete(clientId: number) {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: (id: number) => api.remove(id),
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: [queryKey, clientId] }),
+    })
+  }
+
+  return { useListByClient, useCreateForClient, useUpdate, useDelete }
+}
+
+export const customerHooks = createClientScopedHooks('customers', customersApi)
+export const supplierHooks = createClientScopedHooks('suppliers', suppliersApi)
 
 export function usePriceListItems(priceListId: number) {
   return useQuery({

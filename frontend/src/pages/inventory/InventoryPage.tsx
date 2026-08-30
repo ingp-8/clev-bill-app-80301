@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
 import { itemHooks } from '../../hooks/useMasters'
 import { useAdjustInventory, useInventoryList } from '../../hooks/useInventory'
+import { useProperty } from '../../property/PropertyContext'
 
 export function InventoryPage() {
+  const { activeProperty } = useProperty()
   const { data: levels = [], isLoading } = useInventoryList()
-  const { data: items = [] } = itemHooks.useList()
+  const { data: items = [] } = itemHooks.useListByProperty(activeProperty!.id)
   const adjustMutation = useAdjustInventory()
 
   const [itemId, setItemId] = useState('')

@@ -2,13 +2,16 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
 import { priceListHooks } from '../../hooks/useMasters'
+import { useProperty } from '../../property/PropertyContext'
 import type { PriceList } from '../../api/masters'
 
 export function PriceListsPage() {
-  const { data: rows = [], isLoading } = priceListHooks.useList()
-  const createMutation = priceListHooks.useCreate()
-  const updateMutation = priceListHooks.useUpdate()
-  const deleteMutation = priceListHooks.useDelete()
+  const { activeProperty } = useProperty()
+  const propertyId = activeProperty!.id
+  const { data: rows = [], isLoading } = priceListHooks.useListByProperty(propertyId)
+  const createMutation = priceListHooks.useCreateInProperty(propertyId)
+  const updateMutation = priceListHooks.useUpdate(propertyId)
+  const deleteMutation = priceListHooks.useDelete(propertyId)
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [name, setName] = useState('')

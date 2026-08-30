@@ -3,14 +3,16 @@ import { Link, useParams } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
 import { itemHooks } from '../../hooks/useMasters'
 import { useCreatePriceListItem, useDeletePriceListItem, usePriceListItems } from '../../hooks/useMasters'
+import { useProperty } from '../../property/PropertyContext'
 import type { PriceListItem } from '../../api/masters'
 
 export function PriceListDetailPage() {
   const { priceListId } = useParams<{ priceListId: string }>()
   const id = Number(priceListId)
+  const { activeProperty } = useProperty()
 
   const { data: rows = [], isLoading } = usePriceListItems(id)
-  const { data: items = [] } = itemHooks.useList()
+  const { data: items = [] } = itemHooks.useListByProperty(activeProperty!.id)
   const createMutation = useCreatePriceListItem(id)
   const deleteMutation = useDeletePriceListItem(id)
 

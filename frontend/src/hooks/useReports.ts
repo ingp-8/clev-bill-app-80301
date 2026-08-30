@@ -1,14 +1,26 @@
 import { useQuery } from '@tanstack/react-query'
 import { reportsApi, type ReportFilters } from '../api/reports'
 
-export function useSalesSummary(filters: ReportFilters) {
-  return useQuery({ queryKey: ['reports', 'summary', filters], queryFn: () => reportsApi.summary(filters) })
+export function useSalesSummary(propertyId: number, filters: ReportFilters) {
+  return useQuery({
+    queryKey: ['reports', propertyId, 'summary', filters],
+    queryFn: () => reportsApi.summary(propertyId, filters),
+    enabled: Number.isFinite(propertyId),
+  })
 }
 
-export function useSalesByItem(filters: ReportFilters) {
-  return useQuery({ queryKey: ['reports', 'by-item', filters], queryFn: () => reportsApi.byItem(filters) })
+export function useSalesByItem(propertyId: number, filters: ReportFilters) {
+  return useQuery({
+    queryKey: ['reports', propertyId, 'by-item', filters],
+    queryFn: () => reportsApi.byItem(propertyId, filters),
+    enabled: Number.isFinite(propertyId),
+  })
 }
 
-export function useSalesByDay(filters: ReportFilters) {
-  return useQuery({ queryKey: ['reports', 'by-day', filters], queryFn: () => reportsApi.byDay(filters) })
+export function useSalesByDay(propertyId: number, filters: ReportFilters) {
+  return useQuery({
+    queryKey: ['reports', propertyId, 'by-day', filters],
+    queryFn: () => reportsApi.byDay(propertyId, filters),
+    enabled: Number.isFinite(propertyId),
+  })
 }

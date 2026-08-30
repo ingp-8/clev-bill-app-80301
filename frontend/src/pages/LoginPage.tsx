@@ -1,12 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
-import { useSystemConfig } from '../hooks/useSystemConfig'
 
 export function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const { data: config } = useSystemConfig()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -29,7 +27,7 @@ export function LoginPage() {
 
   return (
     <div style={{ maxWidth: 320, margin: '80px auto', textAlign: 'left' }}>
-      <h1 style={{ fontSize: 32, textAlign: 'center' }}>{config?.storeName ?? 'clevbill'}</h1>
+      <h1 style={{ fontSize: 32, textAlign: 'center' }}>Clevbill</h1>
       <form onSubmit={handleSubmit}>
         <label style={{ display: 'block', marginBottom: 12 }}>
           Username

@@ -1,6 +1,8 @@
-import { useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { itemHooks } from '../../hooks/useMasters'
+import { usePosTerminalsByProperty } from '../../hooks/usePosTerminals'
 import { useCheckout, useEInvoice } from '../../hooks/useSales'
+import { useProperty } from '../../property/PropertyContext'
 import type { Item } from '../../api/masters'
 import type { Sale } from '../../api/sales'
 
@@ -27,7 +29,10 @@ function EInvoiceStatusBadge({ saleId }: { saleId: number }) {
 }
 
 export function CheckoutPage() {
-  const { data: items = [] } = itemHooks.useList()
+  const { activeProperty } = useProperty()
+  const propertyId = activeProperty!.id
+  const { data: items = [] } = itemHooks.useListByProperty(propertyId)
+  const { data: posTerminals = [] } = usePosTerminalsByProperty(propertyId)
   const checkoutMutation = useCheckout()
 
   const [scanValue, setScanValue] = useState('')
@@ -35,7 +40,14 @@ export function CheckoutPage() {
   const [cart, setCart] = useState<CartLine[]>([])
   const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'CARD' | 'UPI' | 'GIFT_CARD' | 'OTHER'>('CASH')
   const [lastSale, setLastSale] = useState<Sale | null>(null)
+  const [posId, setPosId] = useState<number | null>(null)
   const scanInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (posTerminals.length === 0) return
+    const stillValid = posTerminals.some((p) => p.id === posId)
+    if (!stillValid) setPosId(posTerminals[0].id)
+  }, [posTerminals, posId])
 
   const itemsByCode = useMemo(() => {
     const map = new Map<string, Item>()
@@ -98,8 +110,10 @@ export function CheckoutPage() {
   }
 
   async function handleCompleteSale() {
-    if (cart.length === 0) return
+    if (cart.length === 0 || posId === null) return
     const sale = await checkoutMutation.mutateAsync({
+      propertyId,
+      posId,
       customerId: null,
       items: cart.map((line) => ({ itemId: line.item.id, quantity: line.quantity })),
       payments: [{ method: paymentMethod, amount: effectivePaymentAmount }],
@@ -113,6 +127,19 @@ export function CheckoutPage() {
   return (
     <div style={{ maxWidth: 800, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
       <h1 style={{ fontSize: 24 }}>Checkout</h1>
+
+      {posTerminals.length > 1 && (
+        <label style={{ display: 'block', marginBottom: 8 }}>
+          POS terminal{' '}
+          <select value={posId ?? ''} onChange={(e) => setPosId(Number(e.target.value))} style={{ padding: 6 }}>
+            {posTerminals.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.posName}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
       <input
         ref={scanInputRef}
@@ -207,7 +234,7 @@ export function CheckoutPage() {
         <button
           type="button"
           onClick={handleCompleteSale}
-          disabled={cart.length === 0 || checkoutMutation.isPending}
+          disabled={cart.length === 0 || posId === null || checkoutMutation.isPending}
           style={{ padding: '8px 16px', fontWeight: 700 }}
         >
           {checkoutMutation.isPending ? 'Processing...' : 'Complete Sale'}

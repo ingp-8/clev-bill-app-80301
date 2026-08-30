@@ -1,13 +1,16 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
 import { taxRateHooks } from '../../hooks/useMasters'
+import { useProperty } from '../../property/PropertyContext'
 import type { TaxRate } from '../../api/masters'
 
 export function TaxRatesPage() {
-  const { data: rows = [], isLoading } = taxRateHooks.useList()
-  const createMutation = taxRateHooks.useCreate()
-  const updateMutation = taxRateHooks.useUpdate()
-  const deleteMutation = taxRateHooks.useDelete()
+  const { activeProperty } = useProperty()
+  const propertyId = activeProperty!.id
+  const { data: rows = [], isLoading } = taxRateHooks.useListByProperty(propertyId)
+  const createMutation = taxRateHooks.useCreateInProperty(propertyId)
+  const updateMutation = taxRateHooks.useUpdate(propertyId)
+  const deleteMutation = taxRateHooks.useDelete(propertyId)
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [name, setName] = useState('')

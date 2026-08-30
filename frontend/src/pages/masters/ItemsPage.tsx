@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
 import { brandHooks, categoryHooks, itemHooks, taxRateHooks } from '../../hooks/useMasters'
+import { useProperty } from '../../property/PropertyContext'
 import type { Item, ItemRequest, ItemUnit } from '../../api/masters'
 
 const UNITS: ItemUnit[] = ['PCS', 'BOX', 'KG', 'GM', 'LTR', 'ML']
@@ -19,13 +20,15 @@ const emptyForm = {
 }
 
 export function ItemsPage() {
-  const { data: items = [], isLoading } = itemHooks.useList()
-  const { data: categories = [] } = categoryHooks.useList()
-  const { data: brands = [] } = brandHooks.useList()
-  const { data: taxRates = [] } = taxRateHooks.useList()
-  const createMutation = itemHooks.useCreate()
-  const updateMutation = itemHooks.useUpdate()
-  const deleteMutation = itemHooks.useDelete()
+  const { activeProperty } = useProperty()
+  const propertyId = activeProperty!.id
+  const { data: items = [], isLoading } = itemHooks.useListByProperty(propertyId)
+  const { data: categories = [] } = categoryHooks.useListByProperty(propertyId)
+  const { data: brands = [] } = brandHooks.useListByProperty(propertyId)
+  const { data: taxRates = [] } = taxRateHooks.useListByProperty(propertyId)
+  const createMutation = itemHooks.useCreateInProperty(propertyId)
+  const updateMutation = itemHooks.useUpdate(propertyId)
+  const deleteMutation = itemHooks.useDelete(propertyId)
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState(emptyForm)

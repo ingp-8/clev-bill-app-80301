@@ -1,8 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { eInvoiceApi, returnsApi, salesApi, type CheckoutRequest, type ReturnRequest } from '../api/sales'
 
-export function useSales() {
-  return useQuery({ queryKey: ['sales'], queryFn: salesApi.list })
+export function useSalesByProperty(propertyId: number) {
+  return useQuery({
+    queryKey: ['sales', propertyId],
+    queryFn: () => salesApi.listByProperty(propertyId),
+    enabled: Number.isFinite(propertyId),
+  })
 }
 
 export function useSale(id: number) {
@@ -13,7 +17,7 @@ export function useCheckout() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (request: CheckoutRequest) => salesApi.checkout(request),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sales'] }),
+    onSuccess: (sale) => queryClient.invalidateQueries({ queryKey: ['sales', sale.propertyId] }),
   })
 }
 

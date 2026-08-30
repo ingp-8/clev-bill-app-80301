@@ -1,35 +1,17 @@
-import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
-import { useSystemConfig } from '../hooks/useSystemConfig'
+import { useProperty } from '../property/PropertyContext'
 
 export function DashboardPage() {
-  const { user, logout } = useAuth()
-  const { data: config } = useSystemConfig()
+  const { user } = useAuth()
+  const { activeProperty, me } = useProperty()
 
   return (
-    <div style={{ maxWidth: 640, margin: '40px auto', textAlign: 'left' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ fontSize: 28, margin: 0 }}>{config?.storeName ?? 'clevbill'}</h1>
-        <button onClick={logout}>Sign out</button>
-      </div>
+    <div style={{ maxWidth: 640, margin: '40px auto', textAlign: 'left', padding: '0 16px' }}>
+      <h1 style={{ fontSize: 28, margin: 0 }}>{activeProperty?.propertyName ?? 'Clevbill'}</h1>
       <p>
-        Signed in as {user?.fullName} ({user?.role})
+        Signed in as {user?.fullName} ({me?.superAdmin ? 'Super Admin' : user?.roles.join(', ')})
       </p>
-      <p>
-        <Link to="/checkout">Checkout &rarr;</Link>
-      </p>
-      <p>
-        <Link to="/masters">Manage masters &rarr;</Link>
-      </p>
-      <p>
-        <Link to="/inventory">Inventory &rarr;</Link>
-      </p>
-      <p>
-        <Link to="/reports">Reports &rarr;</Link>
-      </p>
-      <p>
-        <Link to="/settings">Business settings &rarr;</Link>
-      </p>
+      <p style={{ color: 'var(--text)' }}>Use the navigation above to get started.</p>
     </div>
   )
 }

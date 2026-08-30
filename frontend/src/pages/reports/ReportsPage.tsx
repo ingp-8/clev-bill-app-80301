@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
 import { categoryHooks } from '../../hooks/useMasters'
 import { useSalesByDay, useSalesByItem, useSalesSummary } from '../../hooks/useReports'
+import { useProperty } from '../../property/PropertyContext'
 
 function toIsoOrUndefined(dateStr: string): string | undefined {
   return dateStr ? new Date(dateStr).toISOString() : undefined
 }
 
 export function ReportsPage() {
-  const { data: categories = [] } = categoryHooks.useList()
+  const { activeProperty } = useProperty()
+  const propertyId = activeProperty!.id
+  const { data: categories = [] } = categoryHooks.useListByProperty(propertyId)
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
   const [categoryId, setCategoryId] = useState('')
@@ -20,9 +23,9 @@ export function ReportsPage() {
     categoryId: categoryId ? Number(categoryId) : undefined,
   }
 
-  const { data: summary } = useSalesSummary(filters)
-  const { data: byItem = [] } = useSalesByItem(filters)
-  const { data: byDay = [] } = useSalesByDay(filters)
+  const { data: summary } = useSalesSummary(propertyId, filters)
+  const { data: byItem = [] } = useSalesByItem(propertyId, filters)
+  const { data: byDay = [] } = useSalesByDay(propertyId, filters)
 
   return (
     <div style={{ maxWidth: 900, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>

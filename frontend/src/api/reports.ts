@@ -41,10 +41,22 @@ function toParams(filters: ReportFilters) {
 }
 
 export const reportsApi = {
-  summary: async (filters: ReportFilters): Promise<SalesSummary> =>
-    (await apiClient.get<SalesSummary>('/v1/reports/sales/summary', { params: toParams(filters) })).data,
-  byItem: async (filters: ReportFilters): Promise<ItemSales[]> =>
-    (await apiClient.get<ItemSales[]>('/v1/reports/sales/by-item', { params: toParams(filters) })).data,
-  byDay: async (filters: ReportFilters): Promise<DailySales[]> =>
-    (await apiClient.get<DailySales[]>('/v1/reports/sales/by-day', { params: toParams(filters) })).data,
+  summary: async (propertyId: number, filters: ReportFilters): Promise<SalesSummary> =>
+    (
+      await apiClient.get<SalesSummary>(`/v1/properties/${propertyId}/reports/sales/summary`, {
+        params: toParams(filters),
+      })
+    ).data,
+  byItem: async (propertyId: number, filters: ReportFilters): Promise<ItemSales[]> =>
+    (
+      await apiClient.get<ItemSales[]>(`/v1/properties/${propertyId}/reports/sales/by-item`, {
+        params: toParams(filters),
+      })
+    ).data,
+  byDay: async (propertyId: number, filters: ReportFilters): Promise<DailySales[]> =>
+    (
+      await apiClient.get<DailySales[]>(`/v1/properties/${propertyId}/reports/sales/by-day`, {
+        params: toParams(filters),
+      })
+    ).data,
 }
