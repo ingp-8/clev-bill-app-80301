@@ -162,4 +162,18 @@
   .pay-pills {
     display: flex;
   }
+
+  .cart-card {
+    flex-wrap: wrap;
+  }
+
+  .cart-card > div:first-child {
+    flex: 1 1 100%;
+  }
+
+  .cart-card .qty-input {
+    width: 76px;
+    font-size: 15px;
+    text-align: center;
+  }
 }

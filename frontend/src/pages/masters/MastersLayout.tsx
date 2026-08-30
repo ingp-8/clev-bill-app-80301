@@ -4,6 +4,7 @@ const TABS = [
   { to: '/masters/categories', label: 'Categories' },
   { to: '/masters/brands', label: 'Brands' },
   { to: '/masters/tax-rates', label: 'Tax Rates' },
+  { to: '/masters/hsn-codes', label: 'HSN Codes' },
   { to: '/masters/items', label: 'Items' },
   { to: '/masters/price-lists', label: 'Price Lists' },
   { to: '/masters/customers', label: 'Customers' },

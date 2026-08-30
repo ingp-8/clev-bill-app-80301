@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
+import { useConfirm } from '../../components/ConfirmDialogContext'
 import { Button, Checkbox, Input } from '../../components/ui'
 import { taxRateHooks } from '../../hooks/useMasters'
 import { useProperty } from '../../property/PropertyContext'
@@ -12,6 +13,7 @@ export function TaxRatesPage() {
   const createMutation = taxRateHooks.useCreateInProperty(propertyId)
   const updateMutation = taxRateHooks.useUpdate(propertyId)
   const deleteMutation = taxRateHooks.useDelete(propertyId)
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [name, setName] = useState('')
@@ -56,7 +58,8 @@ export function TaxRatesPage() {
   }
 
   async function handleDelete(row: TaxRate) {
-    if (confirm(`Delete "${row.name}"?`)) {
+    const ok = await confirmDialog({ message: `Delete "${row.name}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }

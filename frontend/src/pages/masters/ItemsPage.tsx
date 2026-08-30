@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
+import { useConfirm } from '../../components/ConfirmDialogContext'
 import { Button, Checkbox, Input, Select } from '../../components/ui'
-import { brandHooks, categoryHooks, itemHooks, taxRateHooks } from '../../hooks/useMasters'
+import { brandHooks, categoryHooks, hsnCodeHooks, itemHooks, taxRateHooks } from '../../hooks/useMasters'
 import { useProperty } from '../../property/PropertyContext'
 import type { Item, ItemRequest, ItemUnit } from '../../api/masters'
 
@@ -14,7 +15,7 @@ const emptyForm = {
   categoryId: '',
   brandId: '',
   taxRateId: '',
-  hsnCode: '',
+  hsnCodeId: '',
   unit: 'PCS' as ItemUnit,
   sellingPrice: '',
   costPrice: '',
@@ -27,9 +28,11 @@ export function ItemsPage() {
   const { data: categories = [] } = categoryHooks.useListByProperty(propertyId)
   const { data: brands = [] } = brandHooks.useListByProperty(propertyId)
   const { data: taxRates = [] } = taxRateHooks.useListByProperty(propertyId)
+  const { data: hsnCodes = [] } = hsnCodeHooks.useListByProperty(propertyId)
   const createMutation = itemHooks.useCreateInProperty(propertyId)
   const updateMutation = itemHooks.useUpdate(propertyId)
   const deleteMutation = itemHooks.useDelete(propertyId)
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState(emptyForm)
@@ -43,7 +46,7 @@ export function ItemsPage() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    if (!form.taxRateId) return
+    if (!form.taxRateId || !form.hsnCodeId) return
 
     const request: ItemRequest = {
       sku: form.sku,
@@ -52,7 +55,7 @@ export function ItemsPage() {
       categoryId: form.categoryId ? Number(form.categoryId) : null,
       brandId: form.brandId ? Number(form.brandId) : null,
       taxRateId: Number(form.taxRateId),
-      hsnCode: form.hsnCode,
+      hsnCodeId: Number(form.hsnCodeId),
       unit: form.unit,
       sellingPrice: Number(form.sellingPrice),
       costPrice: form.costPrice ? Number(form.costPrice) : null,
@@ -76,7 +79,7 @@ export function ItemsPage() {
       categoryId: row.category ? String(row.category.id) : '',
       brandId: row.brand ? String(row.brand.id) : '',
       taxRateId: String(row.taxRate.id),
-      hsnCode: row.hsnCode ?? '',
+      hsnCodeId: String(row.hsnCode.id),
       unit: row.unit,
       sellingPrice: String(row.sellingPrice),
       costPrice: row.costPrice !== null ? String(row.costPrice) : '',
@@ -85,7 +88,8 @@ export function ItemsPage() {
   }
 
   async function handleDelete(row: Item) {
-    if (confirm(`Delete "${row.name}"?`)) {
+    const ok = await confirmDialog({ message: `Delete "${row.name}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }
@@ -130,15 +134,15 @@ export function ItemsPage() {
               </option>
             ))}
           </Select>
-          <Input
-            value={form.hsnCode}
-            onChange={(e) => setForm({ ...form, hsnCode: e.target.value })}
-            placeholder="HSN code"
-            required
-            pattern="^([0-9]{4}|[0-9]{6}|[0-9]{8})$"
-            title="4, 6, or 8-digit HSN code"
-            style={{ width: 90 }}
-          />
+          <Select value={form.hsnCodeId} onChange={(e) => setForm({ ...form, hsnCodeId: e.target.value })} required>
+            <option value="">HSN code...</option>
+            {hsnCodes.map((h) => (
+              <option key={h.id} value={h.id}>
+                {h.code}
+                {h.description ? ` — ${h.description}` : ''}
+              </option>
+            ))}
+          </Select>
           <Select value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value as ItemUnit })}>
             {UNITS.map((u) => (
               <option key={u} value={u}>
@@ -186,7 +190,7 @@ export function ItemsPage() {
             { header: 'Name', render: (row) => row.name },
             { header: 'Category', render: (row) => row.category?.name ?? '-' },
             { header: 'Brand', render: (row) => row.brand?.name ?? '-' },
-            { header: 'HSN', render: (row) => row.hsnCode },
+            { header: 'HSN', render: (row) => row.hsnCode.code },
             { header: 'Tax', render: (row) => row.taxRate.name },
             { header: 'Unit', render: (row) => row.unit },
             { header: 'Price', render: (row) => row.sellingPrice.toFixed(2) },

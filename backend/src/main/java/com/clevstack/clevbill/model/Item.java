@@ -56,8 +56,9 @@ public class Item extends Auditable {
     @JoinColumn(name = "tax_rate_id", nullable = false)
     private TaxRate taxRate;
 
-    @Column(name = "hsn_code", nullable = false, length = 10)
-    private String hsnCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hsn_code_id", nullable = false)
+    private HsnCode hsnCode;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)

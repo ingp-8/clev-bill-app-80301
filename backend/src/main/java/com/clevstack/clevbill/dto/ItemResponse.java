@@ -14,7 +14,7 @@ public record ItemResponse(
         MasterRefResponse category,
         MasterRefResponse brand,
         TaxRateResponse taxRate,
-        String hsnCode,
+        HsnCodeResponse hsnCode,
         ItemUnit unit,
         BigDecimal sellingPrice,
         BigDecimal costPrice,

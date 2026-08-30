@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { Button, FieldLabel, Input } from '../components/ui'
+import './LoginPage.css'
 
 export function LoginPage() {
   const { login } = useAuth()
@@ -26,38 +28,42 @@ export function LoginPage() {
   }
 
   return (
-    <div style={{ maxWidth: 320, margin: '80px auto', textAlign: 'left' }}>
-      <h1 style={{ fontSize: 32, textAlign: 'center' }}>Clevbill</h1>
-      <form onSubmit={handleSubmit}>
-        <label style={{ display: 'block', marginBottom: 12 }}>
-          Username
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoFocus
-            required
-            style={{ display: 'block', width: '100%', padding: 8, marginTop: 4 }}
-          />
-        </label>
-        <label style={{ display: 'block', marginBottom: 12 }}>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ display: 'block', width: '100%', padding: 8, marginTop: 4 }}
-          />
-        </label>
-        {error && (
-          <p role="alert" style={{ color: 'crimson', marginBottom: 12 }}>
-            {error}
-          </p>
-        )}
-        <button type="submit" disabled={submitting} style={{ width: '100%', padding: 10 }}>
-          {submitting ? 'Signing in...' : 'Sign in'}
-        </button>
-      </form>
+    <div className="login-page">
+      <div className="login-card">
+        <h1 className="login-brand">Clevbill</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="field-group">
+            <FieldLabel htmlFor="login-username">Username</FieldLabel>
+            <Input
+              id="login-username"
+              block
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoFocus
+              required
+            />
+          </div>
+          <div className="field-group">
+            <FieldLabel htmlFor="login-password">Password</FieldLabel>
+            <Input
+              id="login-password"
+              block
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && (
+            <p role="alert" className="login-error">
+              {error}
+            </p>
+          )}
+          <Button type="submit" block size="lg" disabled={submitting}>
+            {submitting ? 'Signing in...' : 'Sign in'}
+          </Button>
+        </form>
+      </div>
     </div>
   )
 }

@@ -215,6 +215,12 @@
   margin-top: 6px;
 }
 
+.form-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
 @media (max-width: 640px) {
   .page {
     padding: 16px 14px 28px;

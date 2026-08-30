@@ -39,9 +39,14 @@ public class SaleReturn extends Auditable {
     @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
+    /**
+     * The cashier/user who processed this return — a business relationship,
+     * distinct from {@link Auditable}'s generic created_by/updated_by audit
+     * columns (which this entity, like every other, also carries).
+     */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", nullable = false)
-    private User createdBy;
+    @JoinColumn(name = "processed_by", nullable = false)
+    private User processedBy;
 
     @OneToMany(mappedBy = "saleReturn", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReturnItem> items = new ArrayList<>();

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthContext'
 import { AppLayout } from './components/AppLayout'
+import { ConfirmDialogProvider } from './components/ConfirmDialogContext'
 import { PermissionGate } from './components/PermissionGate'
 import { CheckoutPage } from './pages/checkout/CheckoutPage'
 import { DashboardPage } from './pages/DashboardPage'
@@ -12,6 +13,7 @@ import { ReportsPage } from './pages/reports/ReportsPage'
 import { BrandsPage } from './pages/masters/BrandsPage'
 import { CategoriesPage } from './pages/masters/CategoriesPage'
 import { CustomersPage } from './pages/masters/CustomersPage'
+import { HsnCodesPage } from './pages/masters/HsnCodesPage'
 import { ItemsPage } from './pages/masters/ItemsPage'
 import { MastersLayout } from './pages/masters/MastersLayout'
 import { PriceListDetailPage } from './pages/masters/PriceListDetailPage'
@@ -30,6 +32,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <ConfirmDialogProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
@@ -97,6 +100,14 @@ function App() {
                   }
                 />
                 <Route
+                  path="hsn-codes"
+                  element={
+                    <PermissionGate moduleCode="MASTERS_HSN">
+                      <HsnCodesPage />
+                    </PermissionGate>
+                  }
+                />
+                <Route
                   path="items"
                   element={
                     <PermissionGate moduleCode="MASTERS_ITEM">
@@ -155,7 +166,7 @@ function App() {
                 }
               />
               <Route
-                path="/admin/properties/:propertyId/pos"
+                path="/admin/pos"
                 element={
                   <PermissionGate moduleCode="POS_MGMT">
                     <PosTerminalsPage />
@@ -183,6 +194,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
+        </ConfirmDialogProvider>
       </AuthProvider>
     </QueryClientProvider>
   )

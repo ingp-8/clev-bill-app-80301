@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
+import { useConfirm } from '../../components/ConfirmDialogContext'
 import { Button, Checkbox, Input } from '../../components/ui'
 import { useRoles } from '../../hooks/useRoles'
 import { useCreateUser, useDeleteUser, useUpdateUser, useUsers } from '../../hooks/useUsers'
@@ -15,12 +16,14 @@ export function UsersPage() {
   const createMutation = useCreateUser()
   const updateMutation = useUpdateUser()
   const deleteMutation = useDeleteUser()
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [enabled, setEnabled] = useState(true)
   const [roleIds, setRoleIds] = useState<Set<number>>(new Set())
   const [propertyIds, setPropertyIds] = useState<Set<number>>(new Set())
+  const [formError, setFormError] = useState<string | null>(null)
 
   function resetForm() {
     setEditingId(null)
@@ -28,6 +31,7 @@ export function UsersPage() {
     setEnabled(true)
     setRoleIds(new Set())
     setPropertyIds(new Set())
+    setFormError(null)
   }
 
   function toggleSet(set: Set<number>, setter: (s: Set<number>) => void, id: number) {
@@ -39,6 +43,7 @@ export function UsersPage() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
+    setFormError(null)
     const request = {
       username: form.username,
       fullName: form.fullName,
@@ -49,7 +54,7 @@ export function UsersPage() {
     }
     if (editingId === null) {
       if (!form.password) {
-        alert('Password is required for a new user')
+        setFormError('Password is required for a new user')
         return
       }
       await createMutation.mutateAsync(request)
@@ -68,7 +73,8 @@ export function UsersPage() {
   }
 
   async function handleDelete(row: AppUser) {
-    if (confirm(`Delete user "${row.username}"?`)) {
+    const ok = await confirmDialog({ message: `Delete user "${row.username}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }
@@ -119,6 +125,8 @@ export function UsersPage() {
             <p className="field-hint">Ignored for Super Admin — they see every property regardless.</p>
           </div>
         </div>
+
+        {formError && <p className="form-error">{formError}</p>}
 
         <div className="form-row" style={{ marginTop: 14 }}>
           <Button type="submit">{editingId === null ? 'Add user' : 'Save user'}</Button>

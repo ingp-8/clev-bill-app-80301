@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { useConfirm } from '../../components/ConfirmDialogContext'
 import { Button, Checkbox, FieldLabel, Input, Select } from '../../components/ui'
 import { useClients } from '../../hooks/useClients'
 import { useCreateProperty, useDeleteProperty, usePropertiesByClient, useUpdateProperty } from '../../hooks/useProperties'
@@ -32,6 +33,7 @@ export function PropertiesPage() {
   const createMutation = useCreateProperty()
   const updateMutation = useUpdateProperty()
   const deleteMutation = useDeleteProperty()
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState(emptyForm)
@@ -89,7 +91,8 @@ export function PropertiesPage() {
   }
 
   async function handleDelete(row: Property) {
-    if (confirm(`Delete "${row.propertyName}"?`)) {
+    const ok = await confirmDialog({ message: `Delete "${row.propertyName}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }
@@ -169,7 +172,7 @@ export function PropertiesPage() {
           columns={[
             {
               header: 'Property',
-              render: (row) => <Link to={`/admin/properties/${row.id}/pos`}>{row.propertyName}</Link>,
+              render: (row) => <Link to={`/admin/pos?propertyId=${row.id}`}>{row.propertyName}</Link>,
             },
             { header: 'GSTIN', render: (row) => row.gstin ?? '-' },
             { header: 'Invoice prefix', render: (row) => row.invoiceSeriesPrefix },

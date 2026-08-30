@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import { login as loginRequest, type LoginRequest } from '../api/authApi'
-import { clearToken, getToken, setToken } from './tokenStorage'
+import { login as loginRequest, logout as logoutRequest, type LoginRequest } from '../api/authApi'
+import { clearToken, getRefreshToken, getToken, setRefreshToken, setToken } from './tokenStorage'
 
 interface AuthUser {
   username: string
@@ -12,7 +12,7 @@ interface AuthContextValue {
   user: AuthUser | null
   isAuthenticated: boolean
   login: (request: LoginRequest) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -34,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login: async (request) => {
         const response = await loginRequest(request)
         setToken(response.token)
+        setRefreshToken(response.refreshToken)
         const authUser: AuthUser = {
           username: response.username,
           fullName: response.fullName,
@@ -42,7 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(USER_KEY, JSON.stringify(authUser))
         setUser(authUser)
       },
-      logout: () => {
+      logout: async () => {
+        const refreshToken = getRefreshToken()
+        if (refreshToken) {
+          try {
+            await logoutRequest(refreshToken)
+          } catch {
+            // Best-effort server-side revoke — local sign-out proceeds regardless.
+          }
+        }
         clearToken()
         localStorage.removeItem(USER_KEY)
         localStorage.removeItem('clevbill.activePropertyId')

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from './DataTable'
+import { useConfirm } from './ConfirmDialogContext'
 import { Button, Checkbox, Input } from './ui'
 import { useProperty } from '../property/PropertyContext'
 
@@ -42,6 +43,7 @@ export function PartyEntityPage<T extends PartyEntity>({ title, hooks }: PartyEn
   const createMutation = hooks.useCreate()
   const updateMutation = hooks.useUpdate()
   const deleteMutation = hooks.useDelete()
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState(emptyForm)
@@ -97,7 +99,8 @@ export function PartyEntityPage<T extends PartyEntity>({ title, hooks }: PartyEn
   }
 
   async function handleDelete(row: T) {
-    if (confirm(`Delete "${row.name}"?`)) {
+    const ok = await confirmDialog({ message: `Delete "${row.name}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { useConfirm } from '../../components/ConfirmDialogContext'
 import { Button, Checkbox, Input } from '../../components/ui'
 import { priceListHooks } from '../../hooks/useMasters'
 import { useProperty } from '../../property/PropertyContext'
@@ -13,6 +14,7 @@ export function PriceListsPage() {
   const createMutation = priceListHooks.useCreateInProperty(propertyId)
   const updateMutation = priceListHooks.useUpdate(propertyId)
   const deleteMutation = priceListHooks.useDelete(propertyId)
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [name, setName] = useState('')
@@ -45,7 +47,8 @@ export function PriceListsPage() {
   }
 
   async function handleDelete(row: PriceList) {
-    if (confirm(`Delete "${row.name}"?`)) {
+    const ok = await confirmDialog({ message: `Delete "${row.name}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }

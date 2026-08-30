@@ -5,13 +5,16 @@ import com.clevstack.clevbill.dto.ItemResponse;
 import com.clevstack.clevbill.dto.MasterRefResponse;
 import com.clevstack.clevbill.dto.TaxRateResponse;
 import com.clevstack.clevbill.exception.ResourceNotFoundException;
+import com.clevstack.clevbill.dto.HsnCodeResponse;
 import com.clevstack.clevbill.model.Brand;
 import com.clevstack.clevbill.model.Category;
+import com.clevstack.clevbill.model.HsnCode;
 import com.clevstack.clevbill.model.Item;
 import com.clevstack.clevbill.model.Property;
 import com.clevstack.clevbill.model.TaxRate;
 import com.clevstack.clevbill.repository.BrandRepository;
 import com.clevstack.clevbill.repository.CategoryRepository;
+import com.clevstack.clevbill.repository.HsnCodeRepository;
 import com.clevstack.clevbill.repository.ItemRepository;
 import com.clevstack.clevbill.repository.TaxRateRepository;
 import java.util.List;
@@ -26,6 +29,7 @@ public class ItemService {
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
     private final TaxRateRepository taxRateRepository;
+    private final HsnCodeRepository hsnCodeRepository;
     private final PropertyService propertyService;
 
     public ItemService(
@@ -33,11 +37,13 @@ public class ItemService {
             CategoryRepository categoryRepository,
             BrandRepository brandRepository,
             TaxRateRepository taxRateRepository,
+            HsnCodeRepository hsnCodeRepository,
             PropertyService propertyService) {
         this.itemRepository = itemRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
         this.taxRateRepository = taxRateRepository;
+        this.hsnCodeRepository = hsnCodeRepository;
         this.propertyService = propertyService;
     }
 
@@ -82,7 +88,7 @@ public class ItemService {
         item.setCategory(request.categoryId() == null ? null : findCategory(property, request.categoryId()));
         item.setBrand(request.brandId() == null ? null : findBrand(property, request.brandId()));
         item.setTaxRate(findTaxRate(property, request.taxRateId()));
-        item.setHsnCode(request.hsnCode());
+        item.setHsnCode(findHsnCode(property, request.hsnCodeId()));
         item.setUnit(request.unit());
         item.setSellingPrice(request.sellingPrice());
         item.setCostPrice(request.costPrice());
@@ -111,6 +117,14 @@ public class ItemService {
         return taxRate;
     }
 
+    private HsnCode findHsnCode(Property property, Long id) {
+        HsnCode hsnCode = hsnCodeRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("HSN code not found: " + id));
+        requireSameProperty(property, hsnCode.getProperty().getId(), "HSN code");
+        return hsnCode;
+    }
+
     private void requireSameProperty(Property property, Long referencedPropertyId, String what) {
         if (!property.getId().equals(referencedPropertyId)) {
             throw new IllegalArgumentException(what + " does not belong to property " + property.getId());
@@ -134,6 +148,16 @@ public class ItemService {
                 taxRate.isActive(),
                 taxRate.getCreatedAt(),
                 taxRate.getUpdatedAt());
+        HsnCode hsnCode = item.getHsnCode();
+        HsnCodeResponse hsnCodeResponse = new HsnCodeResponse(
+                hsnCode.getId(),
+                hsnCode.getProperty().getId(),
+                hsnCode.getClient().getId(),
+                hsnCode.getCode(),
+                hsnCode.getDescription(),
+                hsnCode.isActive(),
+                hsnCode.getCreatedAt(),
+                hsnCode.getUpdatedAt());
 
         return new ItemResponse(
                 item.getId(),
@@ -145,7 +169,7 @@ public class ItemService {
                 category,
                 brand,
                 taxRateResponse,
-                item.getHsnCode(),
+                hsnCodeResponse,
                 item.getUnit(),
                 item.getSellingPrice(),
                 item.getCostPrice(),

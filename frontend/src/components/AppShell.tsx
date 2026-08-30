@@ -17,6 +17,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/inventory', label: 'Inventory', moduleCode: 'INVENTORY' },
   { to: '/reports', label: 'Reports', moduleCode: 'REPORTS' },
   { to: '/admin/properties', label: 'Properties', moduleCode: 'PROPERTY_MGMT' },
+  { to: '/admin/pos', label: 'POS', moduleCode: 'POS_MGMT' },
   { to: '/admin/clients', label: 'Clients', moduleCode: 'CLIENT_MGMT' },
   { to: '/admin/users', label: 'Users', moduleCode: 'USER_MGMT' },
   { to: '/admin/roles', label: 'Roles', moduleCode: 'ROLE_MGMT' },
@@ -39,8 +40,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const visibleItems = NAV_ITEMS.filter((item) => hasPermission(item.moduleCode, 'VIEW'))
 
-  function handleLogout() {
-    logout()
+  async function handleLogout() {
+    await logout()
     navigate('/login', { replace: true })
   }
 

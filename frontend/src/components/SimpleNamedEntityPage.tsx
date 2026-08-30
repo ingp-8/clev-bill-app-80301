@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from './DataTable'
+import { useConfirm } from './ConfirmDialogContext'
 import { Button, Checkbox, Input } from './ui'
 
 interface NamedEntity {
@@ -28,6 +29,7 @@ export function SimpleNamedEntityPage<T extends NamedEntity>({ title, hooks }: S
   const createMutation = hooks.useCreate()
   const updateMutation = hooks.useUpdate()
   const deleteMutation = hooks.useDelete()
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [name, setName] = useState('')
@@ -57,7 +59,8 @@ export function SimpleNamedEntityPage<T extends NamedEntity>({ title, hooks }: S
   }
 
   async function handleDelete(row: T) {
-    if (confirm(`Delete "${row.name}"?`)) {
+    const ok = await confirmDialog({ message: `Delete "${row.name}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }

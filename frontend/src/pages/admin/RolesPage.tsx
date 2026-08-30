@@ -1,5 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
+import { useConfirm } from '../../components/ConfirmDialogContext'
 import { Button, Checkbox, Input } from '../../components/ui'
 import { useCreateRole, useDeleteRole, usePermissions, useRoles, useUpdateRole } from '../../hooks/useRoles'
 import type { Role } from '../../api/roles'
@@ -10,6 +11,7 @@ export function RolesPage() {
   const createMutation = useCreateRole()
   const updateMutation = useUpdateRole()
   const deleteMutation = useDeleteRole()
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editingSystem, setEditingSystem] = useState(false)
@@ -80,7 +82,8 @@ export function RolesPage() {
 
   async function handleDelete(row: Role) {
     if (row.isSystem) return
-    if (confirm(`Delete role "${row.roleName}"?`)) {
+    const ok = await confirmDialog({ message: `Delete role "${row.roleName}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }

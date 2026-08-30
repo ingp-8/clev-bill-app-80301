@@ -56,7 +56,7 @@ public class ReturnService {
         SaleReturn saleReturn = new SaleReturn();
         saleReturn.setSale(sale);
         saleReturn.setReason(request.reason());
-        saleReturn.setCreatedBy(createdBy);
+        saleReturn.setProcessedBy(createdBy);
 
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (ReturnItemRequest line : request.items()) {

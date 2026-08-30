@@ -3,6 +3,7 @@ import {
   brandsApi,
   categoriesApi,
   customersApi,
+  hsnCodesApi,
   itemsApi,
   priceListItemsApi,
   priceListsApi,
@@ -58,6 +59,7 @@ function createPropertyScopedHooks<TEntity, TRequest>(
 export const categoryHooks = createPropertyScopedHooks('categories', categoriesApi)
 export const brandHooks = createPropertyScopedHooks('brands', brandsApi)
 export const taxRateHooks = createPropertyScopedHooks('tax-rates', taxRatesApi)
+export const hsnCodeHooks = createPropertyScopedHooks('hsn-codes', hsnCodesApi)
 export const itemHooks = createPropertyScopedHooks('items', itemsApi)
 export const priceListHooks = createPropertyScopedHooks('price-lists', priceListsApi)
 

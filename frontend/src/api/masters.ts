@@ -83,6 +83,22 @@ export interface Supplier {
 }
 export type SupplierRequest = Omit<Supplier, 'id' | 'clientId' | 'createdAt' | 'updatedAt'>
 
+export interface HsnCode {
+  id: number
+  propertyId: number
+  clientId: number
+  code: string
+  description: string | null
+  active: boolean
+  createdAt: string
+  updatedAt: string
+}
+export interface HsnCodeRequest {
+  code: string
+  description: string | null
+  active: boolean
+}
+
 export type ItemUnit = 'PCS' | 'BOX' | 'KG' | 'GM' | 'LTR' | 'ML'
 
 export interface Item {
@@ -95,7 +111,7 @@ export interface Item {
   category: MasterRef | null
   brand: MasterRef | null
   taxRate: TaxRate
-  hsnCode: string
+  hsnCode: HsnCode
   unit: ItemUnit
   sellingPrice: number
   costPrice: number | null
@@ -110,7 +126,7 @@ export interface ItemRequest {
   categoryId: number | null
   brandId: number | null
   taxRateId: number
-  hsnCode: string
+  hsnCodeId: number
   unit: ItemUnit
   sellingPrice: number
   costPrice: number | null
@@ -179,6 +195,7 @@ function clientScopedCrud<TEntity, TRequest>(resource: string) {
 export const categoriesApi = propertyScopedCrud<Category, CategoryRequest>('categories')
 export const brandsApi = propertyScopedCrud<Brand, BrandRequest>('brands')
 export const taxRatesApi = propertyScopedCrud<TaxRate, TaxRateRequest>('tax-rates')
+export const hsnCodesApi = propertyScopedCrud<HsnCode, HsnCodeRequest>('hsn-codes')
 export const itemsApi = propertyScopedCrud<Item, ItemRequest>('items')
 export const priceListsApi = propertyScopedCrud<PriceList, PriceListRequest>('price-lists')
 

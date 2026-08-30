@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useProperty } from '../property/PropertyContext'
+import { EmptyState, LoadingState } from './EmptyState'
 
 /**
  * Blocks rendering until the active property is resolved. Also the single
@@ -10,20 +11,20 @@ export function PropertyGate({ children }: { children: ReactNode }) {
   const { isLoading, properties, activeProperty } = useProperty()
 
   if (isLoading) {
-    return <p style={{ padding: 24 }}>Loading...</p>
+    return <LoadingState />
   }
 
   if (properties.length === 0) {
     return (
-      <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center' }}>
-        <h2>No property access</h2>
-        <p>Your account isn't assigned to any property yet. Contact an administrator.</p>
-      </div>
+      <EmptyState
+        title="No property access"
+        description="Your account isn't assigned to any property yet. Contact an administrator."
+      />
     )
   }
 
   if (!activeProperty) {
-    return <p style={{ padding: 24 }}>Loading...</p>
+    return <LoadingState />
   }
 
   return <>{children}</>

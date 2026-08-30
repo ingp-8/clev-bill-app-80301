@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { useConfirm } from '../../components/ConfirmDialogContext'
 import { Button, Checkbox, Input } from '../../components/ui'
 import { useClients, useCreateClient, useDeleteClient, useUpdateClient } from '../../hooks/useClients'
 import type { Client } from '../../api/clients'
@@ -12,6 +13,7 @@ export function ClientsPage() {
   const createMutation = useCreateClient()
   const updateMutation = useUpdateClient()
   const deleteMutation = useDeleteClient()
+  const confirmDialog = useConfirm()
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState(emptyForm)
@@ -53,7 +55,8 @@ export function ClientsPage() {
   }
 
   async function handleDelete(row: Client) {
-    if (confirm(`Delete "${row.clientName}"?`)) {
+    const ok = await confirmDialog({ message: `Delete "${row.clientName}"?`, confirmLabel: 'Delete', danger: true })
+    if (ok) {
       await deleteMutation.mutateAsync(row.id)
     }
   }
