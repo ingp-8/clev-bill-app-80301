@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { Button, Input, Select } from '../../components/ui'
 import { itemHooks } from '../../hooks/useMasters'
 import { useCreatePriceListItem, useDeletePriceListItem, usePriceListItems } from '../../hooks/useMasters'
 import { useProperty } from '../../property/PropertyContext'
@@ -35,29 +36,34 @@ export function PriceListDetailPage() {
 
   return (
     <div>
-      <p>
-        <Link to="/masters/price-lists">&larr; Back to price lists</Link>
-      </p>
-      <h2>Price List #{id} — Items</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16 }}>
-        <select value={itemId} onChange={(e) => setItemId(e.target.value)} required style={{ padding: 6 }}>
-          <option value="">Item...</option>
-          {items.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.sku} — {item.name}
-            </option>
-          ))}
-        </select>
-        <input
-          type="number"
-          step="0.01"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="Price"
-          required
-          style={{ padding: 6, width: 110 }}
-        />
-        <button type="submit">Add</button>
+      <Link to="/masters/price-lists" className="page-back">
+        &larr; Back to price lists
+      </Link>
+      <div className="page-header">
+        <h1>Price List #{id} — Items</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Select value={itemId} onChange={(e) => setItemId(e.target.value)} required>
+            <option value="">Item...</option>
+            {items.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.sku} — {item.name}
+              </option>
+            ))}
+          </Select>
+          <Input
+            type="number"
+            step="0.01"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="Price"
+            required
+            style={{ width: 110 }}
+          />
+          <Button type="submit">Add</Button>
+        </div>
       </form>
 
       {isLoading ? (

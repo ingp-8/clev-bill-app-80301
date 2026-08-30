@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
+import { Button, Checkbox, Input } from '../../components/ui'
 import { taxRateHooks } from '../../hooks/useMasters'
 import { useProperty } from '../../property/PropertyContext'
 import type { TaxRate } from '../../api/masters'
@@ -62,42 +63,45 @@ export function TaxRatesPage() {
 
   return (
     <div>
-      <h2>Tax Rates</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name (e.g. GST 18%)" required style={{ padding: 6 }} />
-        <input
-          type="number"
-          step="0.01"
-          value={cgstRate}
-          onChange={(e) => setCgstRate(e.target.value)}
-          placeholder="CGST %"
-          style={{ padding: 6, width: 90 }}
-        />
-        <input
-          type="number"
-          step="0.01"
-          value={sgstRate}
-          onChange={(e) => setSgstRate(e.target.value)}
-          placeholder="SGST %"
-          style={{ padding: 6, width: 90 }}
-        />
-        <input
-          type="number"
-          step="0.01"
-          value={igstRate}
-          onChange={(e) => setIgstRate(e.target.value)}
-          placeholder="IGST %"
-          style={{ padding: 6, width: 90 }}
-        />
-        <label>
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-        </label>
-        <button type="submit">{editingId === null ? 'Add' : 'Save'}</button>
-        {editingId !== null && (
-          <button type="button" onClick={resetForm}>
-            Cancel
-          </button>
-        )}
+      <div className="page-header">
+        <h1>Tax Rates</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name (e.g. GST 18%)" required />
+          <Input
+            type="number"
+            step="0.01"
+            value={cgstRate}
+            onChange={(e) => setCgstRate(e.target.value)}
+            placeholder="CGST %"
+            style={{ width: 90 }}
+          />
+          <Input
+            type="number"
+            step="0.01"
+            value={sgstRate}
+            onChange={(e) => setSgstRate(e.target.value)}
+            placeholder="SGST %"
+            style={{ width: 90 }}
+          />
+          <Input
+            type="number"
+            step="0.01"
+            value={igstRate}
+            onChange={(e) => setIgstRate(e.target.value)}
+            placeholder="IGST %"
+            style={{ width: 90 }}
+          />
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} />
+          <Button type="submit">{editingId === null ? 'Add' : 'Save'}</Button>
+          {editingId !== null && (
+            <Button type="button" variant="ghost" onClick={resetForm}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
 
       {isLoading ? (

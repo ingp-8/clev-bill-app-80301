@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
+import { Button, Checkbox, Input } from '../../components/ui'
 import { useRoles } from '../../hooks/useRoles'
 import { useCreateUser, useDeleteUser, useUpdateUser, useUsers } from '../../hooks/useUsers'
 import { useProperty } from '../../property/PropertyContext'
@@ -73,69 +74,58 @@ export function UsersPage() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <h1 style={{ fontSize: 24 }}>Users</h1>
+    <div className="page">
+      <div className="page-header">
+        <h1>Users</h1>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 24, border: '1px solid var(--border)', padding: 16, borderRadius: 6 }}>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
-          <input
-            value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
-            placeholder="Username"
-            required
-            style={{ padding: 6 }}
-          />
-          <input
-            value={form.fullName}
-            onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-            placeholder="Full name"
-            required
-            style={{ padding: 6 }}
-          />
-          <input
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="Username" required />
+          <Input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} placeholder="Full name" required />
+          <Input
             type="password"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             placeholder={editingId === null ? 'Password' : 'New password (leave blank to keep)'}
-            style={{ padding: 6 }}
           />
-          <label>
-            <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} /> Enabled
-          </label>
+          <Checkbox label="Enabled" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
         </div>
 
-        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-          <div>
-            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>Roles</div>
+        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap' }}>
+          <div className="field-group">
+            <div className="field-group-title">Roles</div>
             {roles.map((role) => (
-              <label key={role.id} style={{ display: 'block', fontSize: 13 }}>
-                <input type="checkbox" checked={roleIds.has(role.id)} onChange={() => toggleSet(roleIds, setRoleIds, role.id)} />{' '}
-                {role.roleName}
-              </label>
+              <div key={role.id}>
+                <Checkbox
+                  label={role.roleName}
+                  checked={roleIds.has(role.id)}
+                  onChange={() => toggleSet(roleIds, setRoleIds, role.id)}
+                />
+              </div>
             ))}
           </div>
-          <div>
-            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>Property access</div>
+          <div className="field-group">
+            <div className="field-group-title">Property access</div>
             {properties.map((property) => (
-              <label key={property.id} style={{ display: 'block', fontSize: 13 }}>
-                <input
-                  type="checkbox"
+              <div key={property.id}>
+                <Checkbox
+                  label={property.propertyName}
                   checked={propertyIds.has(property.id)}
                   onChange={() => toggleSet(propertyIds, setPropertyIds, property.id)}
-                />{' '}
-                {property.propertyName}
-              </label>
+                />
+              </div>
             ))}
-            <p style={{ fontSize: 11, color: 'var(--text)', maxWidth: 220 }}>Ignored for Super Admin — they see every property regardless.</p>
+            <p className="field-hint">Ignored for Super Admin — they see every property regardless.</p>
           </div>
         </div>
 
-        <div style={{ marginTop: 12 }}>
-          <button type="submit">{editingId === null ? 'Add user' : 'Save user'}</button>{' '}
+        <div className="form-row" style={{ marginTop: 14 }}>
+          <Button type="submit">{editingId === null ? 'Add user' : 'Save user'}</Button>
           {editingId !== null && (
-            <button type="button" onClick={resetForm}>
+            <Button type="button" variant="ghost" onClick={resetForm}>
               Cancel
-            </button>
+            </Button>
           )}
         </div>
       </form>

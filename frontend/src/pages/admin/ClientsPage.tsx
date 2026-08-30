@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { Button, Checkbox, Input } from '../../components/ui'
 import { useClients, useCreateClient, useDeleteClient, useUpdateClient } from '../../hooks/useClients'
 import type { Client } from '../../api/clients'
 
@@ -58,43 +59,25 @@ export function ClientsPage() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <h1 style={{ fontSize: 24 }}>Clients</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-        <input
-          value={form.clientName}
-          onChange={(e) => setForm({ ...form, clientName: e.target.value })}
-          placeholder="Client name"
-          required
-          style={{ padding: 6 }}
-        />
-        <input
-          value={form.address}
-          onChange={(e) => setForm({ ...form, address: e.target.value })}
-          placeholder="Address"
-          style={{ padding: 6 }}
-        />
-        <input
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          placeholder="Email"
-          style={{ padding: 6 }}
-        />
-        <input
-          value={form.mobileNo}
-          onChange={(e) => setForm({ ...form, mobileNo: e.target.value })}
-          placeholder="Mobile no."
-          style={{ padding: 6 }}
-        />
-        <label>
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-        </label>
-        <button type="submit">{editingId === null ? 'Add' : 'Save'}</button>
-        {editingId !== null && (
-          <button type="button" onClick={resetForm}>
-            Cancel
-          </button>
-        )}
+    <div className="page">
+      <div className="page-header">
+        <h1>Clients</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={form.clientName} onChange={(e) => setForm({ ...form, clientName: e.target.value })} placeholder="Client name" required />
+          <Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Address" />
+          <Input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" />
+          <Input value={form.mobileNo} onChange={(e) => setForm({ ...form, mobileNo: e.target.value })} placeholder="Mobile no." />
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} />
+          <Button type="submit">{editingId === null ? 'Add' : 'Save'}</Button>
+          {editingId !== null && (
+            <Button type="button" variant="ghost" onClick={resetForm}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
 
       {isLoading ? (

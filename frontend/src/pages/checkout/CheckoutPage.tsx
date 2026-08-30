@@ -1,15 +1,25 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { Button, Input, Select } from '../../components/ui'
 import { itemHooks } from '../../hooks/useMasters'
 import { usePosTerminalsByProperty } from '../../hooks/usePosTerminals'
 import { useCheckout, useEInvoice } from '../../hooks/useSales'
 import { useProperty } from '../../property/PropertyContext'
 import type { Item } from '../../api/masters'
 import type { Sale } from '../../api/sales'
+import './CheckoutPage.css'
 
 interface CartLine {
   item: Item
   quantity: number
 }
+
+const PAYMENT_METHODS: { value: 'CASH' | 'CARD' | 'UPI' | 'GIFT_CARD' | 'OTHER'; label: string }[] = [
+  { value: 'CASH', label: 'Cash' },
+  { value: 'CARD', label: 'Card' },
+  { value: 'UPI', label: 'UPI' },
+  { value: 'GIFT_CARD', label: 'Gift Card' },
+  { value: 'OTHER', label: 'Other' },
+]
 
 function round2(value: number): number {
   return Math.round(value * 100) / 100
@@ -38,7 +48,7 @@ export function CheckoutPage() {
   const [scanValue, setScanValue] = useState('')
   const [scanError, setScanError] = useState<string | null>(null)
   const [cart, setCart] = useState<CartLine[]>([])
-  const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'CARD' | 'UPI' | 'GIFT_CARD' | 'OTHER'>('CASH')
+  const [paymentMethod, setPaymentMethod] = useState<(typeof PAYMENT_METHODS)[number]['value']>('CASH')
   const [lastSale, setLastSale] = useState<Sale | null>(null)
   const [posId, setPosId] = useState<number | null>(null)
   const scanInputRef = useRef<HTMLInputElement>(null)
@@ -125,133 +135,128 @@ export function CheckoutPage() {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <h1 style={{ fontSize: 24 }}>Checkout</h1>
-
-      {posTerminals.length > 1 && (
-        <label style={{ display: 'block', marginBottom: 8 }}>
-          POS terminal{' '}
-          <select value={posId ?? ''} onChange={(e) => setPosId(Number(e.target.value))} style={{ padding: 6 }}>
+    <div className="page">
+      <div className="page-header">
+        <h1>Checkout</h1>
+        {posTerminals.length > 1 && (
+          <Select value={posId ?? ''} onChange={(e) => setPosId(Number(e.target.value))} style={{ marginTop: 8 }}>
             {posTerminals.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.posName}
               </option>
             ))}
-          </select>
-        </label>
-      )}
+          </Select>
+        )}
+      </div>
 
-      <input
+      <Input
         ref={scanInputRef}
+        block
         value={scanValue}
         onChange={(e) => setScanValue(e.target.value)}
         onKeyDown={handleScanKeyDown}
         placeholder="Scan barcode or type SKU, then Enter"
         autoFocus
-        style={{ width: '100%', padding: 10, fontSize: 16, marginBottom: 8 }}
+        className="checkout-scan"
       />
-      {scanError && <p style={{ color: 'crimson', margin: '0 0 12px' }}>{scanError}</p>}
+      {scanError && <p className="checkout-error">{scanError}</p>}
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16 }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', borderBottom: '1px solid var(--border)', padding: '6px 4px' }}>Item</th>
-            <th style={{ textAlign: 'right', borderBottom: '1px solid var(--border)', padding: '6px 4px' }}>Qty</th>
-            <th style={{ textAlign: 'right', borderBottom: '1px solid var(--border)', padding: '6px 4px' }}>Price</th>
-            <th style={{ textAlign: 'right', borderBottom: '1px solid var(--border)', padding: '6px 4px' }}>Line Total</th>
-            <th style={{ borderBottom: '1px solid var(--border)', padding: '6px 4px' }} />
-          </tr>
-        </thead>
-        <tbody>
-          {cart.length === 0 && (
-            <tr>
-              <td colSpan={5} style={{ padding: '12px 4px', color: 'var(--text)' }}>
-                Cart is empty — scan an item to begin
-              </td>
-            </tr>
-          )}
+      <div className="checkout-grid">
+        <div>
+          {cart.length === 0 && <p className="cart-empty">Cart is empty — scan an item to begin</p>}
           {cart.map((line) => (
-            <tr key={line.item.id}>
-              <td style={{ padding: '6px 4px' }}>{line.item.name}</td>
-              <td style={{ padding: '6px 4px', textAlign: 'right' }}>
-                <input
-                  type="number"
-                  step="0.001"
-                  value={line.quantity}
-                  onChange={(e) => updateQuantity(line.item.id, Number(e.target.value))}
-                  style={{ width: 70, textAlign: 'right', padding: 4 }}
-                />
-              </td>
-              <td style={{ padding: '6px 4px', textAlign: 'right' }}>{line.item.sellingPrice.toFixed(2)}</td>
-              <td style={{ padding: '6px 4px', textAlign: 'right' }}>
-                {(line.item.sellingPrice * line.quantity).toFixed(2)}
-              </td>
-              <td style={{ padding: '6px 4px' }}>
-                <button type="button" onClick={() => removeLine(line.item.id)}>
-                  Remove
-                </button>
-              </td>
-            </tr>
+            <div className="cart-card" key={line.item.id}>
+              <div>
+                <div className="name">{line.item.name}</div>
+                <div className="meta">₹{line.item.sellingPrice.toFixed(2)} each</div>
+              </div>
+              <Input
+                type="number"
+                step="0.001"
+                value={line.quantity}
+                onChange={(e) => updateQuantity(line.item.id, Number(e.target.value))}
+                className="qty-input"
+              />
+              <div className="line-total">₹{(line.item.sellingPrice * line.quantity).toFixed(2)}</div>
+              <Button type="button" variant="ghost" onClick={() => removeLine(line.item.id)}>
+                Remove
+              </Button>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-        <table>
-          <tbody>
-            <tr>
-              <td style={{ padding: '2px 12px 2px 0' }}>Subtotal</td>
-              <td style={{ textAlign: 'right' }}>{totals.subtotal.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: '2px 12px 2px 0' }}>Tax</td>
-              <td style={{ textAlign: 'right' }}>{totals.tax.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: '2px 12px 2px 0', fontWeight: 700 }}>Total</td>
-              <td style={{ textAlign: 'right', fontWeight: 700 }}>{totals.total.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="totals-panel">
+          <div className="totals-row">
+            <span>Subtotal</span>
+            <span>₹{totals.subtotal.toFixed(2)}</span>
+          </div>
+          <div className="totals-row">
+            <span>Tax</span>
+            <span>₹{totals.tax.toFixed(2)}</span>
+          </div>
+          <div className="totals-row grand">
+            <span>Total</span>
+            <span>₹{totals.total.toFixed(2)}</span>
+          </div>
+
+          <div className="pay-pills">
+            {PAYMENT_METHODS.map((m) => (
+              <button
+                key={m.value}
+                type="button"
+                className={m.value === paymentMethod ? 'active' : undefined}
+                onClick={() => setPaymentMethod(m.value)}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+
+          <Select
+            block
+            className="pay-select"
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+          >
+            {PAYMENT_METHODS.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
+          </Select>
+          <Input
+            type="number"
+            step="0.01"
+            block
+            value={paymentAmount}
+            onChange={(e) => setPaymentAmount(e.target.value)}
+            placeholder={totals.total.toFixed(2)}
+            style={{ marginBottom: 10 }}
+          />
+
+          <Button
+            type="button"
+            block
+            size="lg"
+            onClick={handleCompleteSale}
+            disabled={cart.length === 0 || posId === null || checkoutMutation.isPending}
+          >
+            {checkoutMutation.isPending ? 'Processing...' : 'Complete Sale'}
+          </Button>
+
+          {checkoutMutation.isError && (
+            <p className="checkout-error" style={{ marginTop: 10 }}>
+              {(checkoutMutation.error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+                'Checkout failed'}
+            </p>
+          )}
+        </div>
       </div>
-
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16 }}>
-        <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)} style={{ padding: 8 }}>
-          <option value="CASH">Cash</option>
-          <option value="CARD">Card</option>
-          <option value="UPI">UPI</option>
-          <option value="GIFT_CARD">Gift Card</option>
-          <option value="OTHER">Other</option>
-        </select>
-        <input
-          type="number"
-          step="0.01"
-          value={paymentAmount}
-          onChange={(e) => setPaymentAmount(e.target.value)}
-          placeholder={totals.total.toFixed(2)}
-          style={{ padding: 8, width: 120 }}
-        />
-        <button
-          type="button"
-          onClick={handleCompleteSale}
-          disabled={cart.length === 0 || posId === null || checkoutMutation.isPending}
-          style={{ padding: '8px 16px', fontWeight: 700 }}
-        >
-          {checkoutMutation.isPending ? 'Processing...' : 'Complete Sale'}
-        </button>
-      </div>
-
-      {checkoutMutation.isError && (
-        <p style={{ color: 'crimson' }}>
-          {(checkoutMutation.error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-            'Checkout failed'}
-        </p>
-      )}
 
       {lastSale && (
-        <div style={{ border: '1px solid var(--border)', padding: 12, marginTop: 16 }}>
+        <div className="sale-complete">
           <strong>Sale complete — {lastSale.billNumber}</strong>
-          <p>Total charged: {lastSale.totalAmount.toFixed(2)}</p>
+          <p>Total charged: ₹{lastSale.totalAmount.toFixed(2)}</p>
           <EInvoiceStatusBadge saleId={lastSale.id} />
         </div>
       )}

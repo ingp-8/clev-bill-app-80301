@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
+import { Button, Checkbox, Input, Select } from '../../components/ui'
 import { brandHooks, categoryHooks, itemHooks, taxRateHooks } from '../../hooks/useMasters'
 import { useProperty } from '../../property/PropertyContext'
 import type { Item, ItemRequest, ItemUnit } from '../../api/masters'
@@ -91,87 +92,85 @@ export function ItemsPage() {
 
   return (
     <div>
-      <h2>Items</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-        <input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} placeholder="SKU" required style={{ padding: 6, width: 100 }} />
-        <input
-          value={form.barcode}
-          onChange={(e) => setForm({ ...form, barcode: e.target.value })}
-          placeholder="Barcode"
-          style={{ padding: 6, width: 120 }}
-        />
-        <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" required style={{ padding: 6 }} />
-        <select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })} style={{ padding: 6 }}>
-          <option value="">No category</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <select value={form.brandId} onChange={(e) => setForm({ ...form, brandId: e.target.value })} style={{ padding: 6 }}>
-          <option value="">No brand</option>
-          {brands.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={form.taxRateId}
-          onChange={(e) => setForm({ ...form, taxRateId: e.target.value })}
-          required
-          style={{ padding: 6 }}
-        >
-          <option value="">Tax rate...</option>
-          {taxRates.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
-        <input
-          value={form.hsnCode}
-          onChange={(e) => setForm({ ...form, hsnCode: e.target.value })}
-          placeholder="HSN code"
-          required
-          pattern="^([0-9]{4}|[0-9]{6}|[0-9]{8})$"
-          title="4, 6, or 8-digit HSN code"
-          style={{ padding: 6, width: 90 }}
-        />
-        <select value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value as ItemUnit })} style={{ padding: 6 }}>
-          {UNITS.map((u) => (
-            <option key={u} value={u}>
-              {u}
-            </option>
-          ))}
-        </select>
-        <input
-          type="number"
-          step="0.01"
-          value={form.sellingPrice}
-          onChange={(e) => setForm({ ...form, sellingPrice: e.target.value })}
-          placeholder="Selling price"
-          required
-          style={{ padding: 6, width: 110 }}
-        />
-        <input
-          type="number"
-          step="0.01"
-          value={form.costPrice}
-          onChange={(e) => setForm({ ...form, costPrice: e.target.value })}
-          placeholder="Cost price"
-          style={{ padding: 6, width: 110 }}
-        />
-        <label>
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-        </label>
-        <button type="submit">{editingId === null ? 'Add' : 'Save'}</button>
-        {editingId !== null && (
-          <button type="button" onClick={resetForm}>
-            Cancel
-          </button>
-        )}
+      <div className="page-header">
+        <h1>Items</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} placeholder="SKU" required style={{ width: 100 }} />
+          <Input
+            value={form.barcode}
+            onChange={(e) => setForm({ ...form, barcode: e.target.value })}
+            placeholder="Barcode"
+            style={{ width: 120 }}
+          />
+          <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" required />
+          <Select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
+            <option value="">No category</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </Select>
+          <Select value={form.brandId} onChange={(e) => setForm({ ...form, brandId: e.target.value })}>
+            <option value="">No brand</option>
+            {brands.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </Select>
+          <Select value={form.taxRateId} onChange={(e) => setForm({ ...form, taxRateId: e.target.value })} required>
+            <option value="">Tax rate...</option>
+            {taxRates.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </Select>
+          <Input
+            value={form.hsnCode}
+            onChange={(e) => setForm({ ...form, hsnCode: e.target.value })}
+            placeholder="HSN code"
+            required
+            pattern="^([0-9]{4}|[0-9]{6}|[0-9]{8})$"
+            title="4, 6, or 8-digit HSN code"
+            style={{ width: 90 }}
+          />
+          <Select value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value as ItemUnit })}>
+            {UNITS.map((u) => (
+              <option key={u} value={u}>
+                {u}
+              </option>
+            ))}
+          </Select>
+          <Input
+            type="number"
+            step="0.01"
+            value={form.sellingPrice}
+            onChange={(e) => setForm({ ...form, sellingPrice: e.target.value })}
+            placeholder="Selling price"
+            required
+            style={{ width: 110 }}
+          />
+          <Input
+            type="number"
+            step="0.01"
+            value={form.costPrice}
+            onChange={(e) => setForm({ ...form, costPrice: e.target.value })}
+            placeholder="Cost price"
+            style={{ width: 110 }}
+          />
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} />
+          <Button type="submit">{editingId === null ? 'Add' : 'Save'}</Button>
+          {editingId !== null && (
+            <Button type="button" variant="ghost" onClick={resetForm}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
 
       {isLoading ? (

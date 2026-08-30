@@ -12,18 +12,10 @@ const TABS = [
 
 export function MastersLayout() {
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '24px 16px', textAlign: 'left' }}>
-      <nav style={{ display: 'flex', gap: 12, marginBottom: 24, borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
+    <div className="page">
+      <nav className="pill-tabs">
         {TABS.map((tab) => (
-          <NavLink
-            key={tab.to}
-            to={tab.to}
-            style={({ isActive }) => ({
-              fontWeight: isActive ? 700 : 400,
-              textDecoration: 'none',
-              color: 'var(--text-h)',
-            })}
-          >
+          <NavLink key={tab.to} to={tab.to} className={({ isActive }) => (isActive ? 'active' : undefined)}>
             {tab.label}
           </NavLink>
         ))}

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { Button, Checkbox, Input } from '../../components/ui'
 import { priceListHooks } from '../../hooks/useMasters'
 import { useProperty } from '../../property/PropertyContext'
 import type { PriceList } from '../../api/masters'
@@ -51,21 +52,22 @@ export function PriceListsPage() {
 
   return (
     <div>
-      <h2>Price Lists</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16 }}>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required style={{ padding: 6 }} />
-        <label>
-          <input type="checkbox" checked={isDefault} onChange={(e) => setIsDefault(e.target.checked)} /> Default
-        </label>
-        <label>
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-        </label>
-        <button type="submit">{editingId === null ? 'Add' : 'Save'}</button>
-        {editingId !== null && (
-          <button type="button" onClick={resetForm}>
-            Cancel
-          </button>
-        )}
+      <div className="page-header">
+        <h1>Price Lists</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required />
+          <Checkbox label="Default" checked={isDefault} onChange={(e) => setIsDefault(e.target.checked)} />
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} />
+          <Button type="submit">{editingId === null ? 'Add' : 'Save'}</Button>
+          {editingId !== null && (
+            <Button type="button" variant="ghost" onClick={resetForm}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
 
       {isLoading ? (

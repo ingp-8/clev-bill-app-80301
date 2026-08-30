@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { FieldLabel, Select } from '../../components/ui'
 import { categoryHooks } from '../../hooks/useMasters'
 import { useSalesByDay, useSalesByItem, useSalesSummary } from '../../hooks/useReports'
 import { useProperty } from '../../property/PropertyContext'
@@ -28,43 +28,59 @@ export function ReportsPage() {
   const { data: byDay = [] } = useSalesByDay(propertyId, filters)
 
   return (
-    <div style={{ maxWidth: 900, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <p>
-        <Link to="/">&larr; Back</Link>
-      </p>
-      <h1 style={{ fontSize: 24 }}>Reports</h1>
+    <div className="page">
+      <div className="page-header">
+        <h1>Reports</h1>
+      </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-        <label>
-          From{' '}
-          <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} style={{ padding: 6 }} />
-        </label>
-        <label>
-          To <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} style={{ padding: 6 }} />
-        </label>
-        <label>
-          Category{' '}
-          <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} style={{ padding: 6 }}>
-            <option value="">All</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="panel">
+        <div className="form-row">
+          <div>
+            <FieldLabel>From</FieldLabel>
+            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="field-input" />
+          </div>
+          <div>
+            <FieldLabel>To</FieldLabel>
+            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="field-input" />
+          </div>
+          <div>
+            <FieldLabel>Category</FieldLabel>
+            <Select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+              <option value="">All</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </div>
       </div>
 
       {summary && (
-        <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
-          <StatTile label="Sales" value={String(summary.saleCount)} />
-          <StatTile label="Revenue" value={summary.totalRevenue.toFixed(2)} />
-          <StatTile label="Tax collected" value={summary.totalTax.toFixed(2)} />
-          <StatTile label="Avg sale value" value={summary.averageSaleValue.toFixed(2)} />
+        <div className="stat-row">
+          <div className="stat">
+            <div className="k">Sales</div>
+            <div className="v">{summary.saleCount}</div>
+          </div>
+          <div className="stat alt">
+            <div className="k">Revenue</div>
+            <div className="v">₹{summary.totalRevenue.toFixed(2)}</div>
+          </div>
+          <div className="stat">
+            <div className="k">Tax collected</div>
+            <div className="v">₹{summary.totalTax.toFixed(2)}</div>
+          </div>
+          <div className="stat alt">
+            <div className="k">Avg sale value</div>
+            <div className="v">₹{summary.averageSaleValue.toFixed(2)}</div>
+          </div>
         </div>
       )}
 
-      <h2 style={{ fontSize: 18 }}>Sales by Item</h2>
+      <div className="panel-head" style={{ marginTop: 4 }}>
+        <h2>Sales by Item</h2>
+      </div>
       <DataTable
         rows={byItem}
         rowKey={(row) => row.itemId}
@@ -73,11 +89,13 @@ export function ReportsPage() {
           { header: 'SKU', render: (row) => row.sku },
           { header: 'Item', render: (row) => row.name },
           { header: 'Qty sold', render: (row) => row.quantitySold },
-          { header: 'Revenue', render: (row) => row.revenue.toFixed(2) },
+          { header: 'Revenue', render: (row) => `₹${row.revenue.toFixed(2)}` },
         ]}
       />
 
-      <h2 style={{ fontSize: 18, marginTop: 24 }}>Sales by Day</h2>
+      <div className="panel-head" style={{ marginTop: 24 }}>
+        <h2>Sales by Day</h2>
+      </div>
       <DataTable
         rows={byDay}
         rowKey={(row) => row.date}
@@ -85,18 +103,9 @@ export function ReportsPage() {
         columns={[
           { header: 'Date', render: (row) => row.date },
           { header: 'Sales', render: (row) => row.saleCount },
-          { header: 'Revenue', render: (row) => row.revenue.toFixed(2) },
+          { header: 'Revenue', render: (row) => `₹${row.revenue.toFixed(2)}` },
         ]}
       />
-    </div>
-  )
-}
-
-function StatTile({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={{ border: '1px solid var(--border)', borderRadius: 6, padding: '12px 16px', minWidth: 120 }}>
-      <div style={{ fontSize: 12, color: 'var(--text)' }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 700 }}>{value}</div>
     </div>
   )
 }

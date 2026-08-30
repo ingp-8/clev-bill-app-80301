@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from './DataTable'
+import { Button, Checkbox, Input } from './ui'
 
 interface NamedEntity {
   id: number
@@ -63,24 +64,21 @@ export function SimpleNamedEntityPage<T extends NamedEntity>({ title, hooks }: S
 
   return (
     <div>
-      <h2>{title}</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16 }}>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
-          required
-          style={{ padding: 6 }}
-        />
-        <label>
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-        </label>
-        <button type="submit">{editingId === null ? 'Add' : 'Save'}</button>
-        {editingId !== null && (
-          <button type="button" onClick={resetForm}>
-            Cancel
-          </button>
-        )}
+      <div className="page-header">
+        <h1>{title}</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required />
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} />
+          <Button type="submit">{editingId === null ? 'Add' : 'Save'}</Button>
+          {editingId !== null && (
+            <Button type="button" variant="ghost" onClick={resetForm}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
 
       {isLoading ? (

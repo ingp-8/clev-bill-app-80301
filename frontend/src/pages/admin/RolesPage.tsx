@@ -1,5 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { DataTable } from '../../components/DataTable'
+import { Button, Checkbox, Input } from '../../components/ui'
 import { useCreateRole, useDeleteRole, usePermissions, useRoles, useUpdateRole } from '../../hooks/useRoles'
 import type { Role } from '../../api/roles'
 
@@ -85,40 +86,33 @@ export function RolesPage() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <h1 style={{ fontSize: 24 }}>Roles</h1>
+    <div className="page">
+      <div className="page-header">
+        <h1>Roles</h1>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 24, border: '1px solid var(--border)', padding: 16, borderRadius: 6 }}>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
-          <input
-            value={roleName}
-            onChange={(e) => setRoleName(e.target.value)}
-            placeholder="Role name"
-            required
-            disabled={editingSystem}
-            style={{ padding: 6 }}
-          />
-          <input
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={roleName} onChange={(e) => setRoleName(e.target.value)} placeholder="Role name" required disabled={editingSystem} />
+          <Input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
-            style={{ padding: 6, flex: 1, minWidth: 200 }}
+            style={{ flex: 1, minWidth: 200 }}
           />
-          <label>
-            <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} disabled={editingSystem} /> Active
-          </label>
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} disabled={editingSystem} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
+        <div className="check-grid" style={{ marginBottom: 14 }}>
           {Array.from(permissionsByModule.entries()).map(([moduleCode, modulePermissions]) => {
             const allChecked = modulePermissions.every((p) => permissionIds.has(p.id))
             return (
-              <div key={moduleCode} style={{ border: '1px solid var(--border)', borderRadius: 4, padding: 8 }}>
-                <label style={{ fontWeight: 600, fontSize: 13 }}>
-                  <input type="checkbox" checked={allChecked} onChange={(e) => toggleModule(moduleCode, e.target.checked)} />{' '}
+              <div key={moduleCode} className="check-card">
+                <label className="check-card-title">
+                  <input type="checkbox" checked={allChecked} onChange={(e) => toggleModule(moduleCode, e.target.checked)} />
                   {moduleCode}
                 </label>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4, fontSize: 12 }}>
+                <div className="check-card-body">
                   {modulePermissions.map((p) => (
                     <label key={p.id}>
                       <input type="checkbox" checked={permissionIds.has(p.id)} onChange={() => togglePermission(p.id)} /> {p.action}
@@ -130,12 +124,12 @@ export function RolesPage() {
           })}
         </div>
 
-        <div style={{ marginTop: 12 }}>
-          <button type="submit">{editingId === null ? 'Add role' : 'Save role'}</button>{' '}
+        <div className="form-row">
+          <Button type="submit">{editingId === null ? 'Add role' : 'Save role'}</Button>
           {editingId !== null && (
-            <button type="button" onClick={resetForm}>
+            <Button type="button" variant="ghost" onClick={resetForm}>
               Cancel
-            </button>
+            </Button>
           )}
         </div>
       </form>

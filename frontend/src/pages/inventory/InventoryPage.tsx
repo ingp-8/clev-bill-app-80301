@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { Button, Input, Select } from '../../components/ui'
 import { itemHooks } from '../../hooks/useMasters'
 import { useAdjustInventory, useInventoryList } from '../../hooks/useInventory'
 import { useProperty } from '../../property/PropertyContext'
@@ -29,32 +30,33 @@ export function InventoryPage() {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <p>
-        <Link to="/">&larr; Back</Link>
-      </p>
-      <h1 style={{ fontSize: 24 }}>Inventory</h1>
+    <div className="page">
+      <div className="page-header">
+        <h1>Inventory</h1>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-        <select value={itemId} onChange={(e) => setItemId(e.target.value)} required style={{ padding: 6 }}>
-          <option value="">Item...</option>
-          {items.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.sku} — {item.name}
-            </option>
-          ))}
-        </select>
-        <input
-          type="number"
-          step="0.001"
-          value={quantityDelta}
-          onChange={(e) => setQuantityDelta(e.target.value)}
-          placeholder="Qty (+/-)"
-          required
-          style={{ padding: 6, width: 100 }}
-        />
-        <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note" style={{ padding: 6, flex: 1 }} />
-        <button type="submit">Adjust</button>
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Select value={itemId} onChange={(e) => setItemId(e.target.value)} required>
+            <option value="">Item...</option>
+            {items.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.sku} — {item.name}
+              </option>
+            ))}
+          </Select>
+          <Input
+            type="number"
+            step="0.001"
+            value={quantityDelta}
+            onChange={(e) => setQuantityDelta(e.target.value)}
+            placeholder="Qty (+/-)"
+            required
+            style={{ width: 110 }}
+          />
+          <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note" style={{ flex: 1, minWidth: 160 }} />
+          <Button type="submit">Adjust</Button>
+        </div>
       </form>
 
       {isLoading ? (

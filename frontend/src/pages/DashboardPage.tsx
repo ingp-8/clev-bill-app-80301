@@ -6,11 +6,13 @@ export function DashboardPage() {
   const { activeProperty, me } = useProperty()
 
   return (
-    <div style={{ maxWidth: 640, margin: '40px auto', textAlign: 'left', padding: '0 16px' }}>
-      <h1 style={{ fontSize: 28, margin: 0 }}>{activeProperty?.propertyName ?? 'Clevbill'}</h1>
-      <p>
-        Signed in as {user?.fullName} ({me?.superAdmin ? 'Super Admin' : user?.roles.join(', ')})
-      </p>
+    <div className="page page-narrow">
+      <div className="page-header">
+        <h1>{activeProperty?.propertyName ?? 'Clevbill'}</h1>
+        <p className="sub">
+          Signed in as {user?.fullName} ({me?.superAdmin ? 'Super Admin' : user?.roles.join(', ')})
+        </p>
+      </div>
       <p style={{ color: 'var(--text)' }}>Use the navigation above to get started.</p>
     </div>
   )

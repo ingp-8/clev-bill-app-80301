@@ -8,11 +8,13 @@ export function InventoryHistoryPage() {
   const { data: transactions = [], isLoading } = useInventoryTransactions(id)
 
   return (
-    <div style={{ maxWidth: 800, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <p>
-        <Link to="/inventory">&larr; Back to inventory</Link>
-      </p>
-      <h1 style={{ fontSize: 24 }}>Stock History — Item #{id}</h1>
+    <div className="page">
+      <Link to="/inventory" className="page-back">
+        &larr; Back to inventory
+      </Link>
+      <div className="page-header">
+        <h1>Stock History — Item #{id}</h1>
+      </div>
 
       {isLoading ? (
         <p>Loading...</p>

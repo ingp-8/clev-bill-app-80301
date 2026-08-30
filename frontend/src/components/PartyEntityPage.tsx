@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { DataTable } from './DataTable'
+import { Button, Checkbox, Input } from './ui'
 import { useProperty } from '../property/PropertyContext'
 
 interface PartyEntity {
@@ -103,67 +104,44 @@ export function PartyEntityPage<T extends PartyEntity>({ title, hooks }: PartyEn
 
   return (
     <div>
-      <h2>{title}</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: 16, border: '1px solid var(--border)', padding: 16, borderRadius: 6 }}>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
-          <input
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            placeholder="Name"
-            required
-            style={{ padding: 6 }}
-          />
-          <input
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            placeholder="Phone"
-            style={{ padding: 6 }}
-          />
-          <input
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            placeholder="Email"
-            style={{ padding: 6 }}
-          />
-          <input
-            value={form.gstin}
-            onChange={(e) => setForm({ ...form, gstin: e.target.value })}
-            placeholder="GSTIN"
-            style={{ padding: 6 }}
-          />
-          <input
-            value={form.address}
-            onChange={(e) => setForm({ ...form, address: e.target.value })}
-            placeholder="Address"
-            style={{ padding: 6 }}
-          />
-          <label>
-            <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-          </label>
+      <div className="page-header">
+        <h1>{title}</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" required />
+          <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone" />
+          <Input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" />
+          <Input value={form.gstin} onChange={(e) => setForm({ ...form, gstin: e.target.value })} placeholder="GSTIN" />
+          <Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Address" />
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} />
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>Serves properties</div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            {properties.map((property) => (
-              <label key={property.id} style={{ fontSize: 13 }}>
-                <input
-                  type="checkbox"
+        <div className="form-row" style={{ alignItems: 'flex-start' }}>
+          <div>
+            <div className="field-label">Serves properties</div>
+            <div className="form-row" style={{ marginBottom: 0 }}>
+              {properties.map((property) => (
+                <Checkbox
+                  key={property.id}
+                  label={property.propertyName}
                   checked={propertyIds.has(property.id)}
                   onChange={() => toggleProperty(property.id)}
-                />{' '}
-                {property.propertyName}
-              </label>
-            ))}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
-        <button type="submit">{editingId === null ? 'Add' : 'Save'}</button>{' '}
-        {editingId !== null && (
-          <button type="button" onClick={resetForm}>
-            Cancel
-          </button>
-        )}
+        <div className="form-row">
+          <Button type="submit">{editingId === null ? 'Add' : 'Save'}</Button>
+          {editingId !== null && (
+            <Button type="button" variant="ghost" onClick={resetForm}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
 
       {isLoading ? (

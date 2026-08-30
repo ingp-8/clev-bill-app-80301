@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { Button, Checkbox, Input } from '../../components/ui'
 import {
   useCreatePosTerminal,
   useDeletePosTerminal,
@@ -52,23 +53,25 @@ export function PosTerminalsPage() {
   }
 
   return (
-    <div style={{ maxWidth: 700, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <p>
-        <Link to="/admin/properties">&larr; Back to properties</Link>
-      </p>
-      <h1 style={{ fontSize: 24 }}>POS Terminals — Property #{id}</h1>
+    <div className="page page-narrow">
+      <Link to="/admin/properties" className="page-back">
+        &larr; Back to properties
+      </Link>
+      <div className="page-header">
+        <h1>POS Terminals — Property #{id}</h1>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16 }}>
-        <input value={posName} onChange={(e) => setPosName(e.target.value)} placeholder="POS name" required style={{ padding: 6 }} />
-        <label>
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-        </label>
-        <button type="submit">{editingId === null ? 'Add' : 'Save'}</button>
-        {editingId !== null && (
-          <button type="button" onClick={resetForm}>
-            Cancel
-          </button>
-        )}
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={posName} onChange={(e) => setPosName(e.target.value)} placeholder="POS name" required />
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} />
+          <Button type="submit">{editingId === null ? 'Add' : 'Save'}</Button>
+          {editingId !== null && (
+            <Button type="button" variant="ghost" onClick={resetForm}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
 
       {isLoading ? (

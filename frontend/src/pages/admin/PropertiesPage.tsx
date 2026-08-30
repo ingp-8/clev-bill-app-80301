@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { DataTable } from '../../components/DataTable'
+import { Button, Checkbox, FieldLabel, Input, Select } from '../../components/ui'
 import { useClients } from '../../hooks/useClients'
 import { useCreateProperty, useDeleteProperty, usePropertiesByClient, useUpdateProperty } from '../../hooks/useProperties'
 import type { Property } from '../../api/properties'
@@ -94,83 +95,67 @@ export function PropertiesPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1000, margin: '24px auto', textAlign: 'left', padding: '0 16px' }}>
-      <h1 style={{ fontSize: 24 }}>Properties</h1>
+    <div className="page">
+      <div className="page-header">
+        <h1>Properties</h1>
+      </div>
 
-      <label style={{ display: 'block', marginBottom: 16 }}>
-        Client{' '}
-        <select value={clientId ?? ''} onChange={(e) => handleClientChange(Number(e.target.value))} style={{ padding: 6 }}>
+      <div style={{ marginBottom: 16 }}>
+        <FieldLabel>Client</FieldLabel>
+        <Select value={clientId ?? ''} onChange={(e) => handleClientChange(Number(e.target.value))}>
           {clients.map((c) => (
             <option key={c.id} value={c.id}>
               {c.clientName}
             </option>
           ))}
-        </select>
-      </label>
+        </Select>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-        <input
-          value={form.propertyName}
-          onChange={(e) => setForm({ ...form, propertyName: e.target.value })}
-          placeholder="Property name"
-          required
-          style={{ padding: 6 }}
-        />
-        <input
-          value={form.address}
-          onChange={(e) => setForm({ ...form, address: e.target.value })}
-          placeholder="Address"
-          style={{ padding: 6 }}
-        />
-        <input
-          value={form.gstin}
-          onChange={(e) => setForm({ ...form, gstin: e.target.value })}
-          placeholder="GSTIN"
-          style={{ padding: 6, width: 130 }}
-        />
-        <input
-          value={form.invoiceSeriesPrefix}
-          onChange={(e) => setForm({ ...form, invoiceSeriesPrefix: e.target.value })}
-          placeholder="Invoice prefix"
-          required
-          style={{ padding: 6, width: 100 }}
-        />
-        <input
-          type="number"
-          step="0.01"
-          value={form.defaultCgstRate}
-          onChange={(e) => setForm({ ...form, defaultCgstRate: e.target.value })}
-          placeholder="CGST %"
-          style={{ padding: 6, width: 80 }}
-        />
-        <input
-          type="number"
-          step="0.01"
-          value={form.defaultSgstRate}
-          onChange={(e) => setForm({ ...form, defaultSgstRate: e.target.value })}
-          placeholder="SGST %"
-          style={{ padding: 6, width: 80 }}
-        />
-        <input
-          type="number"
-          step="0.01"
-          value={form.defaultIgstRate}
-          onChange={(e) => setForm({ ...form, defaultIgstRate: e.target.value })}
-          placeholder="IGST %"
-          style={{ padding: 6, width: 80 }}
-        />
-        <label>
-          <input type="checkbox" checked={eInvoiceEnabled} onChange={(e) => setEInvoiceEnabled(e.target.checked)} /> E-invoice
-        </label>
-        <label>
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-        </label>
-        <button type="submit">{editingId === null ? 'Add' : 'Save'}</button>
-        {editingId !== null && (
-          <button type="button" onClick={resetForm}>
-            Cancel
-          </button>
-        )}
+      <form onSubmit={handleSubmit} className="panel">
+        <div className="form-row">
+          <Input value={form.propertyName} onChange={(e) => setForm({ ...form, propertyName: e.target.value })} placeholder="Property name" required />
+          <Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Address" />
+          <Input value={form.gstin} onChange={(e) => setForm({ ...form, gstin: e.target.value })} placeholder="GSTIN" style={{ width: 140 }} />
+          <Input
+            value={form.invoiceSeriesPrefix}
+            onChange={(e) => setForm({ ...form, invoiceSeriesPrefix: e.target.value })}
+            placeholder="Invoice prefix"
+            required
+            style={{ width: 110 }}
+          />
+          <Input
+            type="number"
+            step="0.01"
+            value={form.defaultCgstRate}
+            onChange={(e) => setForm({ ...form, defaultCgstRate: e.target.value })}
+            placeholder="CGST %"
+            style={{ width: 84 }}
+          />
+          <Input
+            type="number"
+            step="0.01"
+            value={form.defaultSgstRate}
+            onChange={(e) => setForm({ ...form, defaultSgstRate: e.target.value })}
+            placeholder="SGST %"
+            style={{ width: 84 }}
+          />
+          <Input
+            type="number"
+            step="0.01"
+            value={form.defaultIgstRate}
+            onChange={(e) => setForm({ ...form, defaultIgstRate: e.target.value })}
+            placeholder="IGST %"
+            style={{ width: 84 }}
+          />
+          <Checkbox label="E-invoice" checked={eInvoiceEnabled} onChange={(e) => setEInvoiceEnabled(e.target.checked)} />
+          <Checkbox label="Active" checked={active} onChange={(e) => setActive(e.target.checked)} />
+          <Button type="submit">{editingId === null ? 'Add' : 'Save'}</Button>
+          {editingId !== null && (
+            <Button type="button" variant="ghost" onClick={resetForm}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
 
       {isLoading ? (
