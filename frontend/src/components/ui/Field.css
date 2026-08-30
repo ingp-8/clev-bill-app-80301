@@ -1,0 +1,55 @@
+.field-input {
+  font: inherit;
+  font-size: 13.5px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-h);
+}
+
+.field-input::placeholder {
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.field-input:focus-visible,
+.field-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.field-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.field-input-block {
+  display: block;
+  width: 100%;
+}
+
+.field-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--text-h);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.field-checkbox input {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+}
+
+.field-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 6px;
+}

@@ -1,0 +1,130 @@
+.dt-wrap {
+  overflow-x: auto;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  font-size: 13.5px;
+}
+
+.dataTable thead th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  padding: 0 14px 8px;
+}
+
+.dataTable tbody tr {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.dataTable tbody td {
+  padding: 12px 14px;
+  color: var(--text-h);
+}
+
+.dataTable tbody td:first-child {
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.dataTable tbody td:last-child {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.dt-empty {
+  text-align: center;
+  color: var(--text);
+  padding: 20px 14px;
+}
+
+.dt-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dt-btn {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 7px 13px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.dt-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.dt-btn-delete:hover {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.dt-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .dataTable {
+    border-spacing: 0;
+  }
+
+  .dataTable thead {
+    display: none;
+  }
+
+  .dataTable,
+  .dataTable tbody,
+  .dataTable tr,
+  .dataTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .dataTable tbody tr {
+    margin-bottom: 10px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .dataTable tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 !important;
+  }
+
+  .dataTable tbody td:last-child {
+    border-bottom: none;
+  }
+
+  .dataTable tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+
+  .dt-actions {
+    width: 100%;
+  }
+}

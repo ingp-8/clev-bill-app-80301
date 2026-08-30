@@ -1,0 +1,32 @@
+:root {
+  --bg: #f2efe8;
+  --surface: #ffffff;
+  --border: #e2dcc9;
+  --text-h: #2b241a;
+  --text: #6b6152;
+
+  --accent: #c77b1f;
+  --accent-soft: #fbebd3;
+  --sec: #1f6f63;
+  --sec-soft: #dceeea;
+  --danger: #b14a3b;
+  --danger-soft: #f6e2dd;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Karla', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  color-scheme: light;
+}
