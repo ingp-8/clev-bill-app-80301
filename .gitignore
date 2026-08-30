@@ -1,0 +1,15 @@
+.DS_Store
+*.log
+.env
+.env.local
+
+# backend
+backend/target/
+backend/src/main/resources/application-local.yml
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+
+# backup staging (scripts/backup.sh)
+backups/

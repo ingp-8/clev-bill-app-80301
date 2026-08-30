@@ -1,0 +1,9 @@
+package com.clevstack.clevbill.dto;
+
+import com.clevstack.clevbill.model.PaymentMethod;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+
+public record PaymentRequest(@NotNull PaymentMethod method, @NotNull @DecimalMin("0.01") BigDecimal amount) {
+}

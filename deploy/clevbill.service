@@ -1,0 +1,27 @@
+[Unit]
+Description=Clevbill retail billing/POS backend
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=clevbill
+Group=clevbill
+WorkingDirectory=/opt/clevbill
+ExecStart=/usr/bin/java -jar /opt/clevbill/clevbill.jar
+# Real secrets belong in this env file (chmod 600, not in git) — Spring
+# Boot picks up SPRING_DATASOURCE_USERNAME / SPRING_DATASOURCE_PASSWORD /
+# APP_JWT_SECRET etc. directly, the same relaxed-binding mechanism as the
+# local application-local.yml override (backend/src/main/resources/).
+EnvironmentFile=/opt/clevbill/clevbill.env
+Restart=on-failure
+RestartSec=5
+SuccessExitStatus=143
+
+# Keep the JAR's writes off the OS disk it doesn't need
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
